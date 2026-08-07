@@ -1,0 +1,4 @@
+product: astronomer
+product_version: "0.3.5"
+kind: charlie-knowledge
+description: Management-plane SRE scope, playbooks, and tool reference for Charlie

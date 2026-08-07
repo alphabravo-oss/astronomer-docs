@@ -1,0 +1,4 @@
+# Generated packaging output (publish via GitHub Releases)
+/dist/
+.DS_Store
+*.swp

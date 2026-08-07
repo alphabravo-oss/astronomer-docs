@@ -1,11 +1,13 @@
 # Playbook: Tunnel or fleet agent connection flaps
 
+**Version:** 0.3.5 · **Maturity:** test-run
+
 ## Goal
 
 Diagnose management-plane tunnel/hub issues and **fleet agent connectivity
 metadata** without entering downstream clusters.
 
-## Tools
+## Tools (in order)
 
 1. `astronomer.tunnel.health`
 2. `astronomer.tunnel.replica_distribution`
@@ -16,11 +18,14 @@ metadata** without entering downstream clusters.
 
 ## Decision
 
-- Prefer diagnosis and findings in **read_only**.
-- `astronomer.tunnel.restart_component` is a write: requires **approval** (or auto
-  only if explicitly allowlisted—usually not).
-- Never claim to have checked downstream pod state; only connection/telemetry
-  held by Astronomer.
+| Mode | Action |
+| --- | --- |
+| `read_only` | Prefer diagnosis + findings only |
+| `approval` | `astronomer.tunnel.restart_component` only with exact args after evidence |
+| `auto` | Tunnel restart usually **not** allowlisted; fall back to approval/finding |
+
+Never claim to have checked downstream pod state. Only connection/telemetry held
+by Astronomer is in scope.
 
 ## Operator-only follow-ups (do not execute via Charlie)
 

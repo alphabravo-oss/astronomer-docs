@@ -1,16 +1,18 @@
 # Playbook: Approval-mode remediation loop
 
-Use when authoritative mode is **approval** (or auto for allowlisted actions).
+**Version:** 0.3.5 · **Maturity:** test-run
+
+Use when authoritative mode is **approval** (or auto for allowlisted actions only).
 
 ## Rules
 
 1. Gather evidence with **read** tools first (pods, logs, events, readiness).
 2. Propose **exactly one** disclosed write with exact arguments from context
-   (workload name, resource_id, operation_id). Do not invent IDs.
+   (`workload`, `resource_id`, `operation_id`, `task_id`, …). Do not invent IDs.
 3. A tool proposal is **not** an executed action. Wait for product approval UI.
 4. After success, re-read with `rollout_status` / `pods` / `readiness` to verify.
-5. If denied or mode is read_only, open a finding path / manual steps—never retry
-   around denial with a different target.
+5. If denied or mode is `read_only`, open a finding path / manual steps — never
+   retry around denial with a different target.
 
 ## Common remediations
 
@@ -22,8 +24,12 @@ Use when authoritative mode is **approval** (or auto for allowlisted actions).
 | Failed queue task | `queue.retry_task` | `queue.failed_tasks` |
 | Tunnel component wedged | `tunnel.restart_component` | `tunnel.health` |
 
+Prefix all tool names with `astronomer.` as in the catalog
+(e.g. `astronomer.management.workload_restart`).
+
 ## Never
 
 - Describe approval as already granted
 - Switch to a more powerful tool after denial
-- Restart non-mutable Deployments (only server/worker/frontend)
+- Restart non-mutable Deployments (only server/worker/frontend are mutable for restart/scale/rollout)
+- Claim success without a successful tool result payload

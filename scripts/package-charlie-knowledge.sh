@@ -40,23 +40,33 @@ while IFS= read -r -d '' f; do
     cat "$f"
     echo
   } >>"$COMBINED"
-done < <(find "$SRC" -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.yml' \) ! -name '_meta.yaml' -print0 | sort -z)
+done < <(find "$SRC" -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.yml' \) \
+  ! -name '_meta.yaml' ! -name 'TEST-RUN.md' ! -name 'README.md' -print0 | sort -z)
 # Also emit one JSON object per file for multi-document upload pipelines.
+# Exclude operator checklists (TEST-RUN.md) from the RAG corpus — they are human-only.
 python3 - "$SRC" "$OUT_DIR" "$VERSION" <<'PY'
 import json, pathlib, sys
 src, out, version = map(pathlib.Path, sys.argv[1:4])
+skip_names = {"_meta.yaml", "TEST-RUN.md", "README.md"}
 docs = []
 for path in sorted(src.rglob("*")):
-    if not path.is_file() or path.name.startswith("_meta"):
+    if not path.is_file() or path.name in skip_names or path.name.startswith("_meta"):
         continue
     if path.suffix.lower() not in {".md", ".yaml", ".yml"}:
         continue
     rel = path.relative_to(src).as_posix()
+    # metadata values must be strings (Charlie KnowledgeDocumentUpload)
     docs.append({
         "document_key": f"astronomer/{version}/{rel}",
         "title": path.stem.replace("-", " ").title(),
         "content_type": "text/markdown" if path.suffix.lower() == ".md" else "text/yaml",
-        "metadata": {"product": "astronomer", "product_version": str(version), "path": rel},
+        "metadata": {
+            "product": "astronomer",
+            "product_version": str(version),
+            "path": rel,
+            "kind": "charlie-knowledge",
+            "maturity": "test-run",
+        },
         "content": path.read_text(encoding="utf-8"),
     })
 bundle = out / f"astronomer-knowledge-{version}.documents.json"

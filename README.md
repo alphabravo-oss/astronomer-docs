@@ -4,8 +4,8 @@ Versioned product documentation for [Astronomer](https://github.com/alphabravo-o
 
 This repository is the **public docs home** for Astronomer releases. It holds:
 
-1. **Charlie knowledge packs** — Markdown scope, playbooks, and tool references that Charlie (the product agent) retrieves by `product_version` when answering SRE questions.
-2. **Human-readable runbooks** for the same topics (same source; no separate copy).
+1. **Charlie knowledge packs** — Markdown scope, playbooks, and tool references Charlie retrieves by `product_version`.
+2. **Test-run operator notes** — environment IDs, publish steps, and live prompt checklists (`TEST-RUN.md` per version).
 
 Product code and the MCP tool surface live in [`alphabravo-oss/astronomer`](https://github.com/alphabravo-oss/astronomer). Docs here must only describe capabilities that exist for that product version.
 
@@ -14,21 +14,21 @@ Product code and the MCP tool surface live in [`alphabravo-oss/astronomer`](http
 ```
 versions/
   0.3.5/                 # product documentation version (semver)
-    _meta.yaml
+    _meta.yaml           # Charlie IDs + maturity (not uploaded to RAG)
+    TEST-RUN.md          # operator checklist for the dev test install
     scope.md             # hard product safety boundary
     playbooks/           # investigation / remediation runbooks
     reference/           # MCP tools, modes, authority
 scripts/
   package-charlie-knowledge.sh
+  publish-to-charlie.sh  # needs CHARLIE_API_KEY (config_admin)
 ```
 
 ## Current published version
 
-| Product version | Status | Contents |
+| Product version | Status | Browse |
 | --- | --- | --- |
-| **0.3.5** | Published | Charlie SRE scope, crashloop/tunnel/readiness playbooks, MCP + modes reference |
-
-Browse: [`versions/0.3.5/`](./versions/0.3.5/)
+| **0.3.5** | Test-run published | [versions/0.3.5](./versions/0.3.5/) · [TEST-RUN](./versions/0.3.5/TEST-RUN.md) · [Release](https://github.com/alphabravo-oss/astronomer-docs/releases/tag/v0.3.5) |
 
 ## Versioning rules
 
@@ -41,11 +41,20 @@ Browse: [`versions/0.3.5/`](./versions/0.3.5/)
 ```bash
 ./scripts/package-charlie-knowledge.sh 0.3.5
 # writes dist/astronomer-knowledge-0.3.5.{md,documents.json,manifest.txt}
+# (excludes TEST-RUN.md and _meta.yaml from the RAG corpus)
 ```
 
-Then upload documents to the Charlie product collection, publish a knowledge release with `product_version=0.3.5`, activate it, and wait for indexes to become ready.
+### Publish + activate (Charlie central)
 
-GitHub Releases for this repo may attach the same `dist/` artifacts for operators who package offline.
+Requires a **config_admin** API key. Agent enrollment tokens are rejected.
+
+```bash
+export CHARLIE_BASE_URL=https://charlie.dev.alphabravo.io
+export CHARLIE_API_KEY='…'   # config_admin only
+./scripts/publish-to-charlie.sh 0.3.5
+```
+
+See [versions/0.3.5/TEST-RUN.md](./versions/0.3.5/TEST-RUN.md) for collection IDs, smoke prompts, and exit criteria.
 
 ## What belongs here vs product code
 

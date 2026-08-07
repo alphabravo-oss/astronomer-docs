@@ -158,7 +158,7 @@ Run these in the Astronomer Charlie drawer as an admin user.
 | --- | --- | --- |
 | Charlie connection | `connected: true`, mode `read_only` | 2026-08-07 |
 | Tool: k8s version | Answered `v1.36.2+k3s1` (k3s) via tools | 2026-08-07 |
-| Knowledge full pack activate | **Blocked** — needs Charlie `config_admin` API key (agent `cr_`/`ce_` tokens return `auth.forbidden`) | 2026-08-07 |
+| Knowledge full pack activate | **Done** — release `release_63a55c40f70bc267367c9272997e7ccb` active for `product_version=0.3.5`, 10 docs, indexes `ready`; query hits crashloop playbook | 2026-08-07 |
 
 ## 7. Exit criteria for “test run good enough”
 

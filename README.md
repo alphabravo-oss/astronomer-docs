@@ -1,71 +1,69 @@
 # Astronomer Docs
 
-Versioned product documentation for [Astronomer](https://github.com/alphabravo-oss/astronomer) — enterprise Kubernetes operations for adopted clusters.
+Versioned product documentation for **[Astronomer](https://github.com/alphabravo-oss/astronomer)** — enterprise Kubernetes operations for clusters you already run.
 
-This repository is the **public docs home** for Astronomer releases. It holds:
+This repository is the public docs home for Astronomer releases, in the same spirit as [RKE2 docs](https://docs.rke2.io) for RKE2: **what the product is, how it is built, how you install it, and how you operate it.**
 
-1. **Charlie knowledge packs** — Markdown scope, playbooks, and tool references Charlie retrieves by `product_version`.
-2. **Test-run operator notes** — environment IDs, publish steps, and live prompt checklists (`TEST-RUN.md` per version).
+Product source code lives in [`alphabravo-oss/astronomer`](https://github.com/alphabravo-oss/astronomer).
 
-Product code and the MCP tool surface live in [`alphabravo-oss/astronomer`](https://github.com/alphabravo-oss/astronomer). Docs here must only describe capabilities that exist for that product version.
+## What Astronomer is
+
+Astronomer is a self-hosted **management plane** for platform teams:
+
+- **Adopt** existing clusters (RKE2, k3s, EKS, AKS, GKE, bare metal, CAPI, …)
+- **Govern** with projects, RBAC, SSO, audit, and policy
+- **Deploy** with built-in Argo CD and ApplicationSets
+- **Operate** workloads, logs, shell, explorer, and fleet health day-2
+
+It does **not** provision nodes or replace your infrastructure toolchain. You keep Terraform / cloud / RKE2 install flows; Astronomer takes over after the cluster exists.
 
 ## Layout
 
 ```
 versions/
-  0.3.5/                 # product documentation version (semver)
-    _meta.yaml           # Charlie IDs + maturity (not uploaded to RAG)
-    TEST-RUN.md          # operator checklist for the dev test install
-    scope.md             # hard product safety boundary
-    playbooks/           # investigation / remediation runbooks
-    reference/           # MCP tools, modes, authority
+  0.3.5/                    # docs for product version 0.3.5
+    _meta.yaml              # version metadata
+    README.md               # version index
+    architecture.md
+    install.md
+    adopt-clusters.md
+    agents.md
+    gitops.md
+    security-and-rbac.md
+    operations.md
+    management-plane.md
+    backup-and-dr.md
+    reference/
+      crds.md
+      chart-overview.md
 scripts/
-  package-charlie-knowledge.sh
-  publish-to-charlie.sh  # needs CHARLIE_API_KEY (config_admin)
+  package-version.sh        # build dist artifacts for a version
 ```
 
-## Current published version
+## Current version
 
-| Product version | Status | Browse |
-| --- | --- | --- |
-| **0.3.5** | Test-run published | [versions/0.3.5](./versions/0.3.5/) · [TEST-RUN](./versions/0.3.5/TEST-RUN.md) · [Release](https://github.com/alphabravo-oss/astronomer-docs/releases/tag/v0.3.5) |
-
-## Versioning rules
-
-- Folder name = Astronomer **product documentation version** (e.g. `0.3.5`), not a git describe string.
-- When Astronomer ships `0.3.6`, add `versions/0.3.6/` and leave older trees in place for still-running installs.
-- Charlie sessions pin retrieval to the install’s product version; they do not silently use “latest.”
-
-## Packaging for Charlie RAG
-
-```bash
-./scripts/package-charlie-knowledge.sh 0.3.5
-# writes dist/astronomer-knowledge-0.3.5.{md,documents.json,manifest.txt}
-# (excludes TEST-RUN.md and _meta.yaml from the RAG corpus)
-```
-
-### Publish + activate (Charlie central)
-
-Requires a **config_admin** API key. Agent enrollment tokens are rejected.
-
-```bash
-export CHARLIE_BASE_URL=https://charlie.dev.alphabravo.io
-export CHARLIE_API_KEY='…'   # config_admin only
-./scripts/publish-to-charlie.sh 0.3.5
-```
-
-See [versions/0.3.5/TEST-RUN.md](./versions/0.3.5/TEST-RUN.md) for collection IDs, smoke prompts, and exit criteria.
-
-## What belongs here vs product code
-
-| In this repo | In `astronomer` code |
+| Product version | Browse |
 | --- | --- |
-| How to investigate crashloops | Actual pod list / logs tools |
-| When to propose restart vs read-only | Mode and approval enforcement |
-| Fleet tunnel triage steps | Tunnel health tools |
-| Operator narrative | Bounded JSON facts |
+| **0.3.5** | [versions/0.3.5](./versions/0.3.5/) · [Release](https://github.com/alphabravo-oss/astronomer-docs/releases/tag/v0.3.5) |
 
-Docs must **not** invent tools. Playbooks only reference the MCP catalog for that product version.
+## Versioning
+
+- Folder name = Astronomer **product documentation version** (semver), matching the chart/app version where practical.
+- Older trees stay published so installs on older versions keep matching docs.
+- When you ship `0.3.6`, copy `versions/0.3.5` → `versions/0.3.6` and update content.
+
+## Packaging a version
+
+```bash
+./scripts/package-version.sh 0.3.5
+# writes dist/astronomer-docs-0.3.5.{md,documents.json,manifest.txt}
+```
+
+Artifacts are plain Markdown suitable for websites, offline bundles, or any search/index pipeline. They describe **Astronomer**, not an external assistant.
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 

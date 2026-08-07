@@ -152,6 +152,14 @@ Run these in the Astronomer Charlie drawer as an admin user.
 
 ---
 
+## 6b. Live smoke log (this host)
+
+| Check | Result | When |
+| --- | --- | --- |
+| Charlie connection | `connected: true`, mode `read_only` | 2026-08-07 |
+| Tool: k8s version | Answered `v1.36.2+k3s1` (k3s) via tools | 2026-08-07 |
+| Knowledge full pack activate | **Blocked** — needs Charlie `config_admin` API key (agent `cr_`/`ce_` tokens return `auth.forbidden`) | 2026-08-07 |
+
 ## 7. Exit criteria for “test run good enough”
 
 - [ ] Public docs published for `0.3.5` (this repo + Release assets)
